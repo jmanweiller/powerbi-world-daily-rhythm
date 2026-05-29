@@ -44,7 +44,7 @@
     {"name": "vhour", "update": "hours(now) + minutes(now) / 60"},
     {
       "name": "viewerLabel",
-      "update": "vhour < 5 ? 'Asleep' : vhour < 9 ? 'Sunrise & coffee' : vhour < 12 ? 'Morning' : vhour < 15 ? 'Lunch / midday' : vhour < 19 ? 'Golden hour' : 'Nightlife'"
+      "update": "vhour < 5 ? 'Night' : vhour < 9 ? 'Sunrise' : vhour < 12 ? 'Morning' : vhour < 15 ? 'Midday' : vhour < 19 ? 'Sunset' : 'Evening'"
     },
     {"name": "voffRaw", "update": "(hours(now)*60 + minutes(now)) - (utchours(now)*60 + utcminutes(now))"},
     {"name": "viewerOffset", "update": "(voffRaw > 720 ? voffRaw - 1440 : voffRaw < -720 ? voffRaw + 1440 : voffRaw) / 60"},
@@ -76,19 +76,19 @@
         },
         {
           "type": "formula", "as": "vibe",
-          "expr": "datum.localHour < 5 ? 'Asleep' : datum.localHour < 9 ? 'Sunrise' : datum.localHour < 12 ? 'Deep focus' : datum.localHour < 15 ? 'Lunch' : datum.localHour < 19 ? 'Golden hour' : 'Nightlife'"
+          "expr": "datum.localHour < 5 ? 'Night' : datum.localHour < 9 ? 'Sunrise' : datum.localHour < 12 ? 'Morning' : datum.localHour < 15 ? 'Midday' : datum.localHour < 19 ? 'Sunset' : 'Evening'"
         }
       ]
     },
     {
       "name": "vibeMeta",
       "values": [
-        {"vibe": "Asleep",      "label": "Asleep",           "order": 0},
-        {"vibe": "Sunrise",     "label": "Sunrise & coffee", "order": 1},
-        {"vibe": "Deep focus",  "label": "Morning",          "order": 2},
-        {"vibe": "Lunch",       "label": "Lunch / midday",   "order": 3},
-        {"vibe": "Golden hour", "label": "Golden hour",      "order": 4},
-        {"vibe": "Nightlife",   "label": "Nightlife",        "order": 5}
+        {"vibe": "Night",   "label": "Night",   "order": 0},
+        {"vibe": "Sunrise", "label": "Sunrise", "order": 1},
+        {"vibe": "Morning", "label": "Morning", "order": 2},
+        {"vibe": "Midday",  "label": "Midday",  "order": 3},
+        {"vibe": "Sunset",  "label": "Sunset",  "order": 4},
+        {"vibe": "Evening", "label": "Evening", "order": 5}
       ]
     },
     {
@@ -103,7 +103,7 @@
   "scales": [
     {
       "name": "vibeColor", "type": "ordinal",
-      "domain": ["Asleep", "Sunrise", "Deep focus", "Lunch", "Golden hour", "Nightlife"],
+      "domain": ["Night", "Sunrise", "Morning", "Midday", "Sunset", "Evening"],
       "range": ["#2E3A59", "#FF7E6B", "#2DD4BF", "#FBBF24", "#FB7185", "#A78BFA"]
     }
   ],
