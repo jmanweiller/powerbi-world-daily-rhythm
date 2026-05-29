@@ -4,6 +4,7 @@
   "padding": 16,
   "autosize": {"type": "fit", "contains": "padding"},
   "config": {
+    "view": {"stroke": "transparent"},
     "text": {"font": "Segoe UI"},
     "title": {"font": "Segoe UI", "subtitleFont": "Segoe UI"}
   },
