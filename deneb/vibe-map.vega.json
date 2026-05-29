@@ -1,0 +1,148 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "#0B1026",
+  "padding": 16,
+  "autosize": {"type": "fit", "contains": "padding"},
+  "signals": [
+    {
+      "name": "now",
+      "update": "now()",
+      "on": [{"events": {"type": "timer", "throttle": 60000}, "update": "now()"}]
+    },
+    {
+      "name": "selectedVibe",
+      "value": null,
+      "on": [
+        {"events": "@swatch:click, @swatchLabel:click",
+         "update": "datum.vibe === selectedVibe ? null : datum.vibe"},
+        {"events": "dblclick", "update": "null"}
+      ]
+    }
+  ],
+  "data": [
+    {
+      "name": "world",
+      "values": {},
+      "format": {"type": "topojson", "feature": "countries"},
+      "transform": [
+        {"type": "formula", "as": "idNum", "expr": "toNumber(datum.id)"},
+        {
+          "type": "lookup", "from": "dataset", "key": "CountryId",
+          "fields": ["idNum"], "as": ["pbi"],
+          "values": ["UtcOffset", "CountryName"]
+        },
+        {"type": "filter", "expr": "datum.pbi != null"},
+        {
+          "type": "formula", "as": "localHour",
+          "expr": "((utchours(now) + utcminutes(now)/60) + datum.pbi.UtcOffset + 24) % 24"
+        },
+        {
+          "type": "formula", "as": "vibe",
+          "expr": "datum.localHour < 5 ? 'Asleep' : datum.localHour < 9 ? 'Sunrise' : datum.localHour < 12 ? 'Deep focus' : datum.localHour < 15 ? 'Lunch' : datum.localHour < 19 ? 'Golden hour' : 'Nightlife'"
+        }
+      ]
+    },
+    {
+      "name": "vibeMeta",
+      "values": [
+        {"vibe": "Asleep",      "emoji": "🌙", "label": "Asleep",             "order": 0},
+        {"vibe": "Sunrise",     "emoji": "☕", "label": "Sunrise & coffee",   "order": 1},
+        {"vibe": "Deep focus",  "emoji": "💻", "label": "Deep-focus morning", "order": 2},
+        {"vibe": "Lunch",       "emoji": "🍽️", "label": "Lunch / midday",     "order": 3},
+        {"vibe": "Golden hour", "emoji": "🌇", "label": "Golden hour",        "order": 4},
+        {"vibe": "Nightlife",   "emoji": "🎉", "label": "Nightlife",          "order": 5}
+      ]
+    },
+    {
+      "name": "selectedCount",
+      "source": "world",
+      "transform": [
+        {"type": "filter", "expr": "selectedVibe != null && datum.vibe === selectedVibe"},
+        {"type": "aggregate", "ops": ["count"], "as": ["n"]}
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "vibeColor", "type": "ordinal",
+      "domain": ["Asleep", "Sunrise", "Deep focus", "Lunch", "Golden hour", "Nightlife"],
+      "range": ["#2E3A59", "#FF7E6B", "#2DD4BF", "#FBBF24", "#FB7185", "#A78BFA"]
+    }
+  ],
+  "projections": [
+    {
+      "name": "proj", "type": "naturalEarth1",
+      "fit": {"signal": "data('world')"},
+      "size": {"signal": "[width, height-90]"}
+    }
+  ],
+  "title": {
+    "text": "Where are the good vibes — right now?",
+    "subtitle": "Every country coloured by what its people are likely doing this very minute. Click a vibe to spotlight it.",
+    "color": "#E8ECFB", "subtitleColor": "#8A93B8",
+    "fontSize": 22, "subtitleFontSize": 12, "anchor": "start", "offset": 6
+  },
+  "marks": [
+    {
+      "type": "shape", "from": {"data": "world"},
+      "encode": {
+        "update": {
+          "fill": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? scale('vibeColor', datum.vibe) : '#1B2236'"},
+          "stroke": {"value": "#0B1026"}, "strokeWidth": {"value": 0.4},
+          "tooltip": {"signal": "{'Country': datum.pbi.CountryName, 'Local time': format(floor(datum.localHour), '02d') + ':00', 'Vibe': datum.vibe}"}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "proj"}]
+    },
+    {
+      "type": "group",
+      "encode": {"update": {"y": {"signal": "height-44"}, "x": {"value": 0}}},
+      "marks": [
+        {
+          "type": "symbol", "name": "swatch", "from": {"data": "vibeMeta"},
+          "encode": {
+            "update": {
+              "x": {"signal": "datum.order * (width/6) + 10"}, "y": {"value": 8},
+              "size": {"value": 160}, "shape": {"value": "circle"},
+              "fill": {"signal": "scale('vibeColor', datum.vibe)"},
+              "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.3"},
+              "cursor": {"value": "pointer"}
+            }
+          }
+        },
+        {
+          "type": "text", "name": "swatchLabel", "from": {"data": "vibeMeta"},
+          "encode": {
+            "update": {
+              "x": {"signal": "datum.order * (width/6) + 24"}, "y": {"value": 12},
+              "text": {"signal": "datum.emoji + ' ' + datum.label"},
+              "fill": {"value": "#C7CEEC"}, "fontSize": {"value": 11}, "baseline": {"value": "middle"},
+              "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.4"},
+              "cursor": {"value": "pointer"}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "text", "from": {"data": "selectedCount"},
+      "encode": {
+        "update": {
+          "x": {"signal": "width"}, "y": {"value": 0}, "align": {"value": "right"},
+          "text": {"signal": "selectedVibe == null ? '' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
+          "fill": {"value": "#8A93B8"}, "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"value": 0}, "y": {"signal": "height-4"},
+          "text": {"value": "Local time computed live in your browser · UTC offsets as of May 2026"},
+          "fill": {"value": "#5A618A"}, "fontSize": {"value": 9}
+        }
+      }
+    }
+  ]
+}
