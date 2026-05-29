@@ -301,7 +301,7 @@
       "encode": {
         "update": {
           "x": {"value": 0}, "y": {"signal": "height-6"},
-          "text": {"value": "Local time computed live in your browser · UTC offsets as of May 2026"},
+          "text": {"value": "One principal time zone shown per country (the largest span several) · local time computed live in your browser · UTC offsets as of May 2026"},
           "fill": {"value": "#6E76A0"}, "fontSize": {"value": 10}
         }
       }
