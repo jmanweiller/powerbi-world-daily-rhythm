@@ -272,9 +272,10 @@ This is the core deliverable. The `world` dataset's `values` is left as an empty
       "values": {},
       "format": {"type": "topojson", "feature": "countries"},
       "transform": [
+        {"type": "formula", "as": "idNum", "expr": "toNumber(datum.id)"},
         {
           "type": "lookup", "from": "dataset", "key": "CountryId",
-          "fields": ["id"], "as": ["pbi"],
+          "fields": ["idNum"], "as": ["pbi"],
           "values": ["UtcOffset", "CountryName"]
         },
         {"type": "filter", "expr": "datum.pbi != null"},
