@@ -4,7 +4,7 @@ A **live, time-aware world map** built in Power BI — every country coloured by
 
 Built for the **Microsoft Fabric Miniviz** challenge — *May 2026, Week 4: "Where are the good vibes."*
 
-<!-- Hero screenshot goes here, e.g. ![The World's Daily Rhythm](assets/preview.png) -->
+![The World's Daily Rhythm — a live world map coloured by each country's local time of day](assets/hero-now.png)
 
 ---
 
