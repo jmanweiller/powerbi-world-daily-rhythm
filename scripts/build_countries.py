@@ -2,7 +2,7 @@
 """Emit build/countries.json: one row per country with ISO-numeric id,
 name, current UTC offset (decimal hours), and region.
 Offsets are DST-aware as of run time (contest window = May 2026)."""
-import json, datetime
+import json, datetime, os
 from zoneinfo import ZoneInfo
 import pytz
 import pycountry
@@ -45,6 +45,7 @@ for cc, tzs in pytz.country_timezones.items():
     })
 
 rows.sort(key=lambda r: r["CountryId"])
+os.makedirs("build", exist_ok=True)
 with open("build/countries.json", "w", encoding="utf-8") as f:
     json.dump(rows, f, ensure_ascii=False, indent=2)
 print(f"Wrote {len(rows)} countries")
