@@ -15,10 +15,11 @@
       "on": [{"events": {"type": "timer", "throttle": 60000}, "update": "now()"}]
     },
     {"name": "trackX0", "update": "100"},
-    {"name": "trackX1", "update": "width - 150"},
+    {"name": "trackX1", "update": "width - 230"},
     {
       "name": "scrubFrac", "value": 0.5,
       "on": [
+        {"events": {"type": "timer", "throttle": 120}, "update": "playing ? ((scrubFrac + 0.01) % 1) : scrubFrac"},
         {"events": "@resetBtn:click, @resetLabel:click", "update": "0.5"},
         {"events": "@scrubTrack:click, @scrubHandle:click",
          "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"},
@@ -26,6 +27,13 @@
          "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"},
         {"events": "[@scrubTrack:mousedown, window:mouseup] > window:mousemove",
          "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"}
+      ]
+    },
+    {
+      "name": "playing", "value": false,
+      "on": [
+        {"events": "@playBtn:click, @playLabel:click", "update": "!playing"},
+        {"events": "@scrubHandle:mousedown, @scrubTrack:mousedown, @resetBtn:click, @resetLabel:click", "update": "false"}
       ]
     },
     {"name": "shiftHours", "update": "(scrubFrac - 0.5) * 24"},
@@ -199,10 +207,34 @@
       }
     },
     {
+      "type": "rect", "name": "playBtn",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX1 + 52"}, "x2": {"signal": "trackX1 + 118"},
+          "y": {"signal": "height-117"}, "height": {"value": 19},
+          "cornerRadius": {"value": 9},
+          "fill": {"signal": "playing ? '#A78BFA' : '#2A3350'"},
+          "cursor": {"value": "pointer"}
+        }
+      }
+    },
+    {
+      "type": "text", "name": "playLabel",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX1 + 85"}, "y": {"signal": "height-107.5"},
+          "align": {"value": "center"}, "baseline": {"value": "middle"},
+          "text": {"signal": "playing ? 'Pause' : 'Play'"},
+          "fill": {"signal": "playing ? '#1A1430' : '#C7CEEC'"}, "fontSize": {"value": 11},
+          "cursor": {"value": "pointer"}
+        }
+      }
+    },
+    {
       "type": "rect", "name": "resetBtn",
       "encode": {
         "update": {
-          "x": {"signal": "trackX1 + 62"}, "x2": {"signal": "trackX1 + 132"},
+          "x": {"signal": "trackX1 + 126"}, "x2": {"signal": "trackX1 + 192"},
           "y": {"signal": "height-117"}, "height": {"value": 19},
           "cornerRadius": {"value": 9}, "fill": {"value": "#2A3350"},
           "cursor": {"value": "pointer"}
@@ -213,7 +245,7 @@
       "type": "text", "name": "resetLabel",
       "encode": {
         "update": {
-          "x": {"signal": "trackX1 + 97"}, "y": {"signal": "height-107.5"},
+          "x": {"signal": "trackX1 + 159"}, "y": {"signal": "height-107.5"},
           "align": {"value": "center"}, "baseline": {"value": "middle"},
           "text": {"value": "Reset"}, "fill": {"value": "#C7CEEC"}, "fontSize": {"value": 11},
           "cursor": {"value": "pointer"}
