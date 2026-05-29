@@ -14,6 +14,27 @@
       "update": "now()",
       "on": [{"events": {"type": "timer", "throttle": 60000}, "update": "now()"}]
     },
+    {"name": "trackX0", "update": "100"},
+    {"name": "trackX1", "update": "width - 150"},
+    {
+      "name": "scrubFrac", "value": 0.5,
+      "on": [
+        {"events": "@scrubTrack:click, @scrubHandle:click",
+         "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"},
+        {"events": "[@scrubHandle:mousedown, window:mouseup] > window:mousemove",
+         "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"},
+        {"events": "[@scrubTrack:mousedown, window:mouseup] > window:mousemove",
+         "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"}
+      ]
+    },
+    {"name": "shiftHours", "update": "(scrubFrac - 0.5) * 24"},
+    {"name": "clock", "update": "now + shiftHours * 3600000"},
+    {"name": "handleX", "update": "trackX0 + scrubFrac * (trackX1 - trackX0)"},
+    {"name": "vhour", "update": "hours(now) + minutes(now) / 60"},
+    {
+      "name": "viewerLabel",
+      "update": "vhour < 5 ? '🌙 Asleep' : vhour < 9 ? '☕ Sunrise & coffee' : vhour < 12 ? '💻 Deep-focus morning' : vhour < 15 ? '🍽️ Lunch / midday' : vhour < 19 ? '🌇 Golden hour' : '🎉 Nightlife'"
+    },
     {
       "name": "selectedVibe",
       "value": null,
@@ -38,7 +59,7 @@
         {"type": "filter", "expr": "datum.pbi != null"},
         {
           "type": "formula", "as": "localHour",
-          "expr": "((utchours(now) + utcminutes(now)/60) + datum.pbi.UtcOffset + 24) % 24"
+          "expr": "((utchours(clock) + utcminutes(clock)/60) + datum.pbi.UtcOffset + 24) % 24"
         },
         {
           "type": "formula", "as": "vibe",
@@ -77,14 +98,14 @@
     {
       "name": "proj", "type": "naturalEarth1",
       "fit": {"signal": "data('world')"},
-      "size": {"signal": "[width, height-64]"}
+      "size": {"signal": "[width, height-120]"}
     }
   ],
   "title": {
     "text": "Where are the good vibes — right now?",
-    "subtitle": "Every country coloured by what its people are likely doing this very minute. Click a vibe to spotlight it.",
-    "color": "#E8ECFB", "subtitleColor": "#8A93B8",
-    "fontSize": 22, "subtitleFontSize": 12, "anchor": "start", "offset": 6
+    "subtitle": "Every country is coloured by what its people are likely doing this very minute. Click a vibe to spotlight it · drag the slider to time-travel.",
+    "color": "#F0F3FF", "subtitleColor": "#AEB6D9",
+    "fontSize": 23, "subtitleFontSize": 13.5, "anchor": "start", "offset": 6
   },
   "marks": [
     {
@@ -99,12 +120,85 @@
       "transform": [{"type": "geoshape", "projection": "proj"}]
     },
     {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"signal": "width"}, "y": {"value": 4}, "align": {"value": "right"},
+          "text": {"signal": "'Where you are right now:  ' + viewerLabel"},
+          "fill": {"value": "#AEB6D9"}, "fontSize": {"value": 13}
+        }
+      }
+    },
+    {
+      "type": "rect", "name": "scrubTrack",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX0 - 8"}, "x2": {"signal": "trackX1 + 8"},
+          "y": {"signal": "height-94"}, "height": {"value": 18},
+          "fill": {"value": "#0B1026"}, "fillOpacity": {"value": 0.001},
+          "cursor": {"value": "pointer"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX0"}, "x2": {"signal": "trackX1"},
+          "y": {"signal": "height-86"}, "height": {"value": 3},
+          "cornerRadius": {"value": 2}, "fill": {"value": "#39426B"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX0"}, "x2": {"signal": "handleX"},
+          "y": {"signal": "height-86"}, "height": {"value": 3},
+          "cornerRadius": {"value": 2}, "fill": {"value": "#A78BFA"}
+        }
+      }
+    },
+    {
+      "type": "symbol", "name": "scrubHandle",
+      "encode": {
+        "update": {
+          "x": {"signal": "handleX"}, "y": {"signal": "height-84.5"},
+          "size": {"value": 220}, "shape": {"value": "circle"},
+          "fill": {"value": "#F0F3FF"}, "stroke": {"value": "#A78BFA"}, "strokeWidth": {"value": 2},
+          "cursor": {"value": "ew-resize"}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX0 - 16"}, "y": {"signal": "height-84"}, "align": {"value": "right"},
+          "baseline": {"value": "middle"}, "text": {"value": "🕓 Time-travel"},
+          "fill": {"value": "#AEB6D9"}, "fontSize": {"value": 12}
+        }
+      }
+    },
+    {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX1 + 18"}, "y": {"signal": "height-84"}, "align": {"value": "left"},
+          "baseline": {"value": "middle"},
+          "text": {"signal": "abs(shiftHours) < 0.25 ? 'now' : (shiftHours > 0 ? '+' : '−') + format(abs(shiftHours), '.0f') + 'h'"},
+          "fill": {"value": "#F0F3FF"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
+        }
+      }
+    },
+    {
       "type": "text", "from": {"data": "selectedCount"},
       "encode": {
         "update": {
-          "x": {"signal": "width/2"}, "y": {"signal": "height-58"}, "align": {"value": "center"},
+          "x": {"signal": "width/2"}, "y": {"signal": "height-62"}, "align": {"value": "center"},
           "text": {"signal": "selectedVibe == null ? '' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
-          "fill": {"value": "#C7CEEC"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
+          "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
         }
       }
     },
@@ -112,8 +206,8 @@
       "type": "symbol", "name": "swatch", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "datum.order * (width/6) + 10"}, "y": {"signal": "height-38"},
-          "size": {"value": 160}, "shape": {"value": "circle"},
+          "x": {"signal": "datum.order * (width/6) + 14"}, "y": {"signal": "height-38"},
+          "size": {"value": 200}, "shape": {"value": "circle"},
           "fill": {"signal": "scale('vibeColor', datum.vibe)"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.3"},
           "cursor": {"value": "pointer"}
@@ -124,10 +218,10 @@
       "type": "text", "name": "swatchLabel", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "datum.order * (width/6) + 24"}, "y": {"signal": "height-38"},
+          "x": {"signal": "datum.order * (width/6) + 30"}, "y": {"signal": "height-38"},
           "text": {"signal": "datum.emoji + ' ' + datum.label"},
-          "fill": {"value": "#C7CEEC"}, "fontSize": {"value": 11}, "baseline": {"value": "middle"},
-          "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.4"},
+          "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "baseline": {"value": "middle"},
+          "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.45"},
           "cursor": {"value": "pointer"}
         }
       }
@@ -138,7 +232,7 @@
         "update": {
           "x": {"value": 0}, "y": {"signal": "height-6"},
           "text": {"value": "Local time computed live in your browser · UTC offsets as of May 2026"},
-          "fill": {"value": "#5A618A"}, "fontSize": {"value": 9}
+          "fill": {"value": "#6E76A0"}, "fontSize": {"value": 10}
         }
       }
     }
