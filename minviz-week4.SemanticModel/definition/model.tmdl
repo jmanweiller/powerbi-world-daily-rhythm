@@ -10,5 +10,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
+ref table Countries
+
 ref cultureInfo en-CA
 
