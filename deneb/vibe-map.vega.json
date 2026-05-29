@@ -31,7 +31,7 @@
     {"name": "shiftHours", "update": "(scrubFrac - 0.5) * 24"},
     {"name": "clock", "update": "now + shiftHours * 3600000"},
     {"name": "handleX", "update": "trackX0 + scrubFrac * (trackX1 - trackX0)"},
-    {"name": "legendItemW", "update": "min(185, (width - 40) / 6)"},
+    {"name": "legendItemW", "update": "min(205, (width - 40) / 6)"},
     {"name": "legendX0", "update": "(width - legendItemW * 6) / 2"},
     {"name": "vhour", "update": "hours(now) + minutes(now) / 60"},
     {
@@ -221,14 +221,22 @@
       }
     },
     {
+      "type": "text",
+      "encode": {
+        "update": {
+          "x": {"signal": "width/2"}, "y": {"signal": "height-62"}, "align": {"value": "center"},
+          "text": {"signal": "selectedVibe == null ? 'Tip: hover any country for its local time · click a colour below to spotlight one part of the day' : ''"},
+          "fill": {"value": "#9AA3C8"}, "fontSize": {"value": 13}
+        }
+      }
+    },
+    {
       "type": "text", "from": {"data": "selectedCount"},
       "encode": {
         "update": {
           "x": {"signal": "width/2"}, "y": {"signal": "height-62"}, "align": {"value": "center"},
-          "text": {"signal": "selectedVibe == null ? 'Tip: hover any country for its local time · click a colour below to spotlight one part of the day' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
-          "fill": {"signal": "selectedVibe == null ? '#9AA3C8' : '#DCE2F5'"},
-          "fontSize": {"value": 12.5},
-          "fontWeight": {"signal": "selectedVibe == null ? 'normal' : 'bold'"}
+          "text": {"signal": "selectedVibe == null ? '' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
+          "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
         }
       }
     },
@@ -236,8 +244,8 @@
       "type": "symbol", "name": "swatch", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "legendX0 + datum.order * legendItemW + 8"}, "y": {"signal": "height-38"},
-          "size": {"value": 200}, "shape": {"value": "circle"},
+          "x": {"signal": "legendX0 + datum.order * legendItemW + 8"}, "y": {"signal": "height-37"},
+          "size": {"value": 290}, "shape": {"value": "circle"},
           "fill": {"signal": "scale('vibeColor', datum.vibe)"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.3"},
           "cursor": {"value": "pointer"}
@@ -248,9 +256,9 @@
       "type": "text", "name": "swatchLabel", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "legendX0 + datum.order * legendItemW + 22"}, "y": {"signal": "height-38"},
+          "x": {"signal": "legendX0 + datum.order * legendItemW + 26"}, "y": {"signal": "height-37"},
           "text": {"signal": "datum.label"},
-          "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "baseline": {"value": "middle"},
+          "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 15}, "baseline": {"value": "middle"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.45"},
           "cursor": {"value": "pointer"}
         }
