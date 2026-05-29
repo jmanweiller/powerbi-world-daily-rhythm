@@ -125,9 +125,9 @@
       "type": "shape", "from": {"data": "world"},
       "encode": {
         "update": {
-          "fill": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? scale('vibeColor', datum.vibe) : '#1B2236'"},
-          "stroke": {"signal": "abs(datum.pbi.UtcOffset - viewerOffset) < 0.25 ? '#FFFFFF' : '#0B1026'"},
-          "strokeWidth": {"signal": "abs(datum.pbi.UtcOffset - viewerOffset) < 0.25 ? 1.4 : 0.4"},
+          "fill": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? scale('vibeColor', datum.vibe) : '#11162a'"},
+          "stroke": {"signal": "selectedVibe != null ? (datum.vibe === selectedVibe ? '#F0F3FF' : '#0B1026') : (abs(datum.pbi.UtcOffset - viewerOffset) < 0.25 ? '#FFFFFF' : '#0B1026')"},
+          "strokeWidth": {"signal": "selectedVibe != null ? (datum.vibe === selectedVibe ? 1.2 : 0.4) : (abs(datum.pbi.UtcOffset - viewerOffset) < 0.25 ? 1.4 : 0.4)"},
           "tooltip": {"signal": "{'Country': datum.pbi.CountryName, 'Local time': format(floor(datum.localHour), '02d') + ':' + format(floor((datum.localHour % 1) * 60), '02d'), 'Vibe': datum.vibe}"}
         }
       },
