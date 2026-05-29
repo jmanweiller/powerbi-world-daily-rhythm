@@ -19,6 +19,7 @@
     {
       "name": "scrubFrac", "value": 0.5,
       "on": [
+        {"events": "@resetBtn:click, @resetLabel:click", "update": "0.5"},
         {"events": "@scrubTrack:click, @scrubHandle:click",
          "update": "clamp((x() - trackX0) / (trackX1 - trackX0), 0, 1)"},
         {"events": "[@scrubHandle:mousedown, window:mouseup] > window:mousemove",
@@ -33,8 +34,10 @@
     {"name": "vhour", "update": "hours(now) + minutes(now) / 60"},
     {
       "name": "viewerLabel",
-      "update": "vhour < 5 ? '🌙 Asleep' : vhour < 9 ? '☕ Sunrise & coffee' : vhour < 12 ? '💻 Deep-focus morning' : vhour < 15 ? '🍽️ Lunch / midday' : vhour < 19 ? '🌇 Golden hour' : '🎉 Nightlife'"
+      "update": "vhour < 5 ? 'Asleep' : vhour < 9 ? 'Sunrise & coffee' : vhour < 12 ? 'Deep-focus morning' : vhour < 15 ? 'Lunch / midday' : vhour < 19 ? 'Golden hour' : 'Nightlife'"
     },
+    {"name": "voffRaw", "update": "(hours(now)*60 + minutes(now)) - (utchours(now)*60 + utcminutes(now))"},
+    {"name": "viewerOffset", "update": "(voffRaw > 720 ? voffRaw - 1440 : voffRaw < -720 ? voffRaw + 1440 : voffRaw) / 60"},
     {
       "name": "selectedVibe",
       "value": null,
@@ -70,12 +73,12 @@
     {
       "name": "vibeMeta",
       "values": [
-        {"vibe": "Asleep",      "emoji": "🌙", "label": "Asleep",             "order": 0},
-        {"vibe": "Sunrise",     "emoji": "☕", "label": "Sunrise & coffee",   "order": 1},
-        {"vibe": "Deep focus",  "emoji": "💻", "label": "Deep-focus morning", "order": 2},
-        {"vibe": "Lunch",       "emoji": "🍽️", "label": "Lunch / midday",     "order": 3},
-        {"vibe": "Golden hour", "emoji": "🌇", "label": "Golden hour",        "order": 4},
-        {"vibe": "Nightlife",   "emoji": "🎉", "label": "Nightlife",          "order": 5}
+        {"vibe": "Asleep",      "label": "Asleep",             "order": 0},
+        {"vibe": "Sunrise",     "label": "Sunrise & coffee",   "order": 1},
+        {"vibe": "Deep focus",  "label": "Deep-focus morning", "order": 2},
+        {"vibe": "Lunch",       "label": "Lunch / midday",     "order": 3},
+        {"vibe": "Golden hour", "label": "Golden hour",        "order": 4},
+        {"vibe": "Nightlife",   "label": "Nightlife",          "order": 5}
       ]
     },
     {
@@ -102,8 +105,8 @@
     }
   ],
   "title": {
-    "text": "Where are the good vibes — right now?",
-    "subtitle": "Every country is coloured by what its people are likely doing this very minute. Click a vibe to spotlight it · drag the slider to time-travel.",
+    "text": "The world's daily rhythm",
+    "subtitle": "Every country coloured by its local time of day — watch morning, noon and night sweep across the map.",
     "color": "#F0F3FF", "subtitleColor": "#AEB6D9",
     "fontSize": 23, "subtitleFontSize": 13.5, "anchor": "start", "offset": 6
   },
@@ -113,7 +116,8 @@
       "encode": {
         "update": {
           "fill": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? scale('vibeColor', datum.vibe) : '#1B2236'"},
-          "stroke": {"value": "#0B1026"}, "strokeWidth": {"value": 0.4},
+          "stroke": {"signal": "abs(datum.pbi.UtcOffset - viewerOffset) < 0.25 ? '#FFFFFF' : '#0B1026'"},
+          "strokeWidth": {"signal": "abs(datum.pbi.UtcOffset - viewerOffset) < 0.25 ? 1.4 : 0.4"},
           "tooltip": {"signal": "{'Country': datum.pbi.CountryName, 'Local time': format(floor(datum.localHour), '02d') + ':' + format(floor((datum.localHour % 1) * 60), '02d'), 'Vibe': datum.vibe}"}
         }
       },
@@ -124,7 +128,7 @@
       "encode": {
         "update": {
           "x": {"signal": "width"}, "y": {"value": 4}, "align": {"value": "right"},
-          "text": {"signal": "'Where you are right now:  ' + viewerLabel"},
+          "text": {"signal": "'Your time zone (outlined in white): ' + viewerLabel"},
           "fill": {"value": "#AEB6D9"}, "fontSize": {"value": 13}
         }
       }
@@ -176,7 +180,7 @@
       "encode": {
         "update": {
           "x": {"signal": "trackX0 - 16"}, "y": {"signal": "height-84"}, "align": {"value": "right"},
-          "baseline": {"value": "middle"}, "text": {"value": "🕓 Time-travel"},
+          "baseline": {"value": "middle"}, "text": {"value": "Time-travel"},
           "fill": {"value": "#AEB6D9"}, "fontSize": {"value": 12}
         }
       }
@@ -189,6 +193,28 @@
           "baseline": {"value": "middle"},
           "text": {"signal": "abs(shiftHours) < 0.25 ? 'now' : (shiftHours > 0 ? '+' : '−') + format(abs(shiftHours), '.0f') + 'h'"},
           "fill": {"value": "#F0F3FF"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
+        }
+      }
+    },
+    {
+      "type": "rect", "name": "resetBtn",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX1 + 62"}, "x2": {"signal": "trackX1 + 132"},
+          "y": {"signal": "height-93"}, "height": {"value": 19},
+          "cornerRadius": {"value": 9}, "fill": {"value": "#2A3350"},
+          "cursor": {"value": "pointer"}
+        }
+      }
+    },
+    {
+      "type": "text", "name": "resetLabel",
+      "encode": {
+        "update": {
+          "x": {"signal": "trackX1 + 97"}, "y": {"signal": "height-83.5"},
+          "align": {"value": "center"}, "baseline": {"value": "middle"},
+          "text": {"value": "Reset"}, "fill": {"value": "#C7CEEC"}, "fontSize": {"value": 11},
+          "cursor": {"value": "pointer"}
         }
       }
     },
@@ -219,7 +245,7 @@
       "encode": {
         "update": {
           "x": {"signal": "datum.order * (width/6) + 30"}, "y": {"signal": "height-38"},
-          "text": {"signal": "datum.emoji + ' ' + datum.label"},
+          "text": {"signal": "datum.label"},
           "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "baseline": {"value": "middle"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.45"},
           "cursor": {"value": "pointer"}
