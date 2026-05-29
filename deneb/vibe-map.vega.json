@@ -103,7 +103,7 @@
     {
       "name": "proj", "type": "naturalEarth1",
       "fit": {"signal": "data('world')"},
-      "size": {"signal": "[width, height-120]"}
+      "size": {"signal": "[width, height-132]"}
     }
   ],
   "title": {
@@ -140,7 +140,7 @@
       "encode": {
         "update": {
           "x": {"signal": "trackX0 - 8"}, "x2": {"signal": "trackX1 + 8"},
-          "y": {"signal": "height-94"}, "height": {"value": 18},
+          "y": {"signal": "height-118"}, "height": {"value": 18},
           "fill": {"value": "#0B1026"}, "fillOpacity": {"value": 0.001},
           "cursor": {"value": "pointer"}
         }
@@ -151,7 +151,7 @@
       "encode": {
         "update": {
           "x": {"signal": "trackX0"}, "x2": {"signal": "trackX1"},
-          "y": {"signal": "height-86"}, "height": {"value": 3},
+          "y": {"signal": "height-110"}, "height": {"value": 3},
           "cornerRadius": {"value": 2}, "fill": {"value": "#39426B"}
         }
       }
@@ -161,7 +161,7 @@
       "encode": {
         "update": {
           "x": {"signal": "trackX0"}, "x2": {"signal": "handleX"},
-          "y": {"signal": "height-86"}, "height": {"value": 3},
+          "y": {"signal": "height-110"}, "height": {"value": 3},
           "cornerRadius": {"value": 2}, "fill": {"value": "#A78BFA"}
         }
       }
@@ -170,7 +170,7 @@
       "type": "symbol", "name": "scrubHandle",
       "encode": {
         "update": {
-          "x": {"signal": "handleX"}, "y": {"signal": "height-84.5"},
+          "x": {"signal": "handleX"}, "y": {"signal": "height-108.5"},
           "size": {"value": 220}, "shape": {"value": "circle"},
           "fill": {"value": "#F0F3FF"}, "stroke": {"value": "#A78BFA"}, "strokeWidth": {"value": 2},
           "cursor": {"value": "ew-resize"}
@@ -181,7 +181,7 @@
       "type": "text",
       "encode": {
         "update": {
-          "x": {"signal": "trackX0 - 16"}, "y": {"signal": "height-84"}, "align": {"value": "right"},
+          "x": {"signal": "trackX0 - 16"}, "y": {"signal": "height-108"}, "align": {"value": "right"},
           "baseline": {"value": "middle"}, "text": {"value": "Time-travel"},
           "fill": {"value": "#AEB6D9"}, "fontSize": {"value": 12}
         }
@@ -191,7 +191,7 @@
       "type": "text",
       "encode": {
         "update": {
-          "x": {"signal": "trackX1 + 18"}, "y": {"signal": "height-84"}, "align": {"value": "left"},
+          "x": {"signal": "trackX1 + 18"}, "y": {"signal": "height-108"}, "align": {"value": "left"},
           "baseline": {"value": "middle"},
           "text": {"signal": "abs(shiftHours) < 0.25 ? 'now' : (shiftHours > 0 ? '+' : '−') + format(abs(shiftHours), '.0f') + 'h'"},
           "fill": {"value": "#F0F3FF"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
@@ -203,7 +203,7 @@
       "encode": {
         "update": {
           "x": {"signal": "trackX1 + 62"}, "x2": {"signal": "trackX1 + 132"},
-          "y": {"signal": "height-93"}, "height": {"value": 19},
+          "y": {"signal": "height-117"}, "height": {"value": 19},
           "cornerRadius": {"value": 9}, "fill": {"value": "#2A3350"},
           "cursor": {"value": "pointer"}
         }
@@ -213,7 +213,7 @@
       "type": "text", "name": "resetLabel",
       "encode": {
         "update": {
-          "x": {"signal": "trackX1 + 97"}, "y": {"signal": "height-83.5"},
+          "x": {"signal": "trackX1 + 97"}, "y": {"signal": "height-107.5"},
           "align": {"value": "center"}, "baseline": {"value": "middle"},
           "text": {"value": "Reset"}, "fill": {"value": "#C7CEEC"}, "fontSize": {"value": 11},
           "cursor": {"value": "pointer"}
@@ -224,7 +224,7 @@
       "type": "text",
       "encode": {
         "update": {
-          "x": {"signal": "width/2"}, "y": {"signal": "height-62"}, "align": {"value": "center"},
+          "x": {"signal": "width/2"}, "y": {"signal": "height-70"}, "align": {"value": "center"},
           "text": {"signal": "selectedVibe == null ? 'Tip: hover any country for its local time · click a colour below to spotlight one part of the day' : ''"},
           "fill": {"value": "#9AA3C8"}, "fontSize": {"value": 13}
         }
@@ -234,7 +234,7 @@
       "type": "text", "from": {"data": "selectedCount"},
       "encode": {
         "update": {
-          "x": {"signal": "width/2"}, "y": {"signal": "height-62"}, "align": {"value": "center"},
+          "x": {"signal": "width/2"}, "y": {"signal": "height-70"}, "align": {"value": "center"},
           "text": {"signal": "selectedVibe == null ? '' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
           "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
         }
@@ -244,7 +244,7 @@
       "type": "symbol", "name": "swatch", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "legendX0 + datum.order * legendItemW + 8"}, "y": {"signal": "height-37"},
+          "x": {"signal": "legendX0 + datum.order * legendItemW + 8"}, "y": {"signal": "height-34"},
           "size": {"value": 290}, "shape": {"value": "circle"},
           "fill": {"signal": "scale('vibeColor', datum.vibe)"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.3"},
@@ -256,7 +256,7 @@
       "type": "text", "name": "swatchLabel", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "legendX0 + datum.order * legendItemW + 26"}, "y": {"signal": "height-37"},
+          "x": {"signal": "legendX0 + datum.order * legendItemW + 26"}, "y": {"signal": "height-34"},
           "text": {"signal": "datum.label"},
           "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 15}, "baseline": {"value": "middle"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.45"},
