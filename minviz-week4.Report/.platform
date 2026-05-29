@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "minviz-week4"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "c77dfe8a-afa9-4c7d-981a-a4fcf68a1285"
+  }
+}

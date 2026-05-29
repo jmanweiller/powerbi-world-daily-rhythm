@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "minviz-week4"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f70bb280-c19a-42b8-8648-ff327f898589"
+  }
+}
