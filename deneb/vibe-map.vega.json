@@ -31,10 +31,12 @@
     {"name": "shiftHours", "update": "(scrubFrac - 0.5) * 24"},
     {"name": "clock", "update": "now + shiftHours * 3600000"},
     {"name": "handleX", "update": "trackX0 + scrubFrac * (trackX1 - trackX0)"},
+    {"name": "legendItemW", "update": "min(185, (width - 40) / 6)"},
+    {"name": "legendX0", "update": "(width - legendItemW * 6) / 2"},
     {"name": "vhour", "update": "hours(now) + minutes(now) / 60"},
     {
       "name": "viewerLabel",
-      "update": "vhour < 5 ? 'Asleep' : vhour < 9 ? 'Sunrise & coffee' : vhour < 12 ? 'Deep-focus morning' : vhour < 15 ? 'Lunch / midday' : vhour < 19 ? 'Golden hour' : 'Nightlife'"
+      "update": "vhour < 5 ? 'Asleep' : vhour < 9 ? 'Sunrise & coffee' : vhour < 12 ? 'Morning' : vhour < 15 ? 'Lunch / midday' : vhour < 19 ? 'Golden hour' : 'Nightlife'"
     },
     {"name": "voffRaw", "update": "(hours(now)*60 + minutes(now)) - (utchours(now)*60 + utcminutes(now))"},
     {"name": "viewerOffset", "update": "(voffRaw > 720 ? voffRaw - 1440 : voffRaw < -720 ? voffRaw + 1440 : voffRaw) / 60"},
@@ -73,12 +75,12 @@
     {
       "name": "vibeMeta",
       "values": [
-        {"vibe": "Asleep",      "label": "Asleep",             "order": 0},
-        {"vibe": "Sunrise",     "label": "Sunrise & coffee",   "order": 1},
-        {"vibe": "Deep focus",  "label": "Deep-focus morning", "order": 2},
-        {"vibe": "Lunch",       "label": "Lunch / midday",     "order": 3},
-        {"vibe": "Golden hour", "label": "Golden hour",        "order": 4},
-        {"vibe": "Nightlife",   "label": "Nightlife",          "order": 5}
+        {"vibe": "Asleep",      "label": "Asleep",           "order": 0},
+        {"vibe": "Sunrise",     "label": "Sunrise & coffee", "order": 1},
+        {"vibe": "Deep focus",  "label": "Morning",          "order": 2},
+        {"vibe": "Lunch",       "label": "Lunch / midday",   "order": 3},
+        {"vibe": "Golden hour", "label": "Golden hour",      "order": 4},
+        {"vibe": "Nightlife",   "label": "Nightlife",        "order": 5}
       ]
     },
     {
@@ -106,7 +108,7 @@
   ],
   "title": {
     "text": "The world's daily rhythm",
-    "subtitle": "Every country coloured by its local time of day — watch morning, noon and night sweep across the map.",
+    "subtitle": "Every country, colored by its local time of day (use the time-travel bar to watch morning, noon and night sweep across the map).",
     "color": "#F0F3FF", "subtitleColor": "#AEB6D9",
     "fontSize": 23, "subtitleFontSize": 13.5, "anchor": "start", "offset": 6
   },
@@ -127,7 +129,7 @@
       "type": "text",
       "encode": {
         "update": {
-          "x": {"signal": "width"}, "y": {"value": 4}, "align": {"value": "right"},
+          "x": {"signal": "width - 18"}, "y": {"value": 4}, "align": {"value": "right"},
           "text": {"signal": "'Your time zone (outlined in white): ' + viewerLabel"},
           "fill": {"value": "#AEB6D9"}, "fontSize": {"value": 13}
         }
@@ -223,8 +225,10 @@
       "encode": {
         "update": {
           "x": {"signal": "width/2"}, "y": {"signal": "height-62"}, "align": {"value": "center"},
-          "text": {"signal": "selectedVibe == null ? '' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
-          "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "fontWeight": {"value": "bold"}
+          "text": {"signal": "selectedVibe == null ? 'Tip: hover any country for its local time · click a colour below to spotlight one part of the day' : selectedVibe + ' right now in ' + datum.n + ' countries'"},
+          "fill": {"signal": "selectedVibe == null ? '#9AA3C8' : '#DCE2F5'"},
+          "fontSize": {"value": 12.5},
+          "fontWeight": {"signal": "selectedVibe == null ? 'normal' : 'bold'"}
         }
       }
     },
@@ -232,7 +236,7 @@
       "type": "symbol", "name": "swatch", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "datum.order * (width/6) + 14"}, "y": {"signal": "height-38"},
+          "x": {"signal": "legendX0 + datum.order * legendItemW + 8"}, "y": {"signal": "height-38"},
           "size": {"value": 200}, "shape": {"value": "circle"},
           "fill": {"signal": "scale('vibeColor', datum.vibe)"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.3"},
@@ -244,7 +248,7 @@
       "type": "text", "name": "swatchLabel", "from": {"data": "vibeMeta"},
       "encode": {
         "update": {
-          "x": {"signal": "datum.order * (width/6) + 30"}, "y": {"signal": "height-38"},
+          "x": {"signal": "legendX0 + datum.order * legendItemW + 22"}, "y": {"signal": "height-38"},
           "text": {"signal": "datum.label"},
           "fill": {"value": "#DCE2F5"}, "fontSize": {"value": 13}, "baseline": {"value": "middle"},
           "opacity": {"signal": "selectedVibe == null || datum.vibe === selectedVibe ? 1 : 0.45"},
