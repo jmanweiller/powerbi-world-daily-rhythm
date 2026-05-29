@@ -16,6 +16,16 @@ Built for the **Microsoft Fabric Miniviz** challenge — *May 2026, Week 4: "Whe
 - 📍 **Your own time zone** is outlined in white, pinned to your real local time.
 - 🔦 **Click a colour** to spotlight just that part of the day.
 
+## See it in action
+
+**Spotlight a single part of the day** — click a colour in the legend and the rest of the world dims, with a live count of how many countries are in it:
+
+![Spotlighting "Sunrise" — only the countries currently at sunrise stay lit, the rest fade out](assets/spotlight-sunrise.png)
+
+**Time-travel** — drag the bar (or hit Play) to send the band sweeping around the globe. Same instant, pushed a couple of hours ahead:
+
+![The map time-travelled forward — the colour band has shifted across the map](assets/time-travel.png)
+
 ## Why it's interesting (the craft)
 
 - **It's genuinely live.** DAX `NOW()` freezes at the last data refresh — useless for this. Instead, each country's local time is computed *client-side* with Deneb/Vega's `now()`. Whoever opens it sees their real current moment, no refresh required.
